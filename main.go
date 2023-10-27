@@ -14,7 +14,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(typ+" inputs:", inputs.Shape())
-		fmt.Println(typ+" data:", targets.Shape())
+		fmt.Println(typ, "inputs:", inputs.Shape())
+		fmt.Println(typ, "data:", targets.Shape())
 	}
 }
