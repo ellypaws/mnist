@@ -10,6 +10,11 @@ canvas.addEventListener('mousemove', draw);
 const expectedInput = document.getElementById('expected');
 const resetButton = document.getElementById('resetButton');
 const randomButton = document.getElementById('randomButton');
+const additionButton = document.getElementById('additionButton');
+const additionDiv = document.getElementById('addition');
+const augendElement = document.getElementById('augend');
+const addendElement = document.getElementById('addend');
+const sumElement = document.getElementById('sum');
 const trainButton = document.getElementById('trainButton');
 const appendButton = document.getElementById('appendButton');
 const numberButtons = document.querySelectorAll('.number-button');
@@ -20,6 +25,7 @@ let chart;
 
 resetButton.addEventListener('click', resetCanvas);
 randomButton.addEventListener('click', randomizeExpected);
+additionButton.addEventListener('click', randomizeAddition);
 trainButton.addEventListener('click', startTraining);
 appendButton.addEventListener('click', sendTrainingData);
 numberButtons.forEach(button => button.onclick = () => {
@@ -215,6 +221,11 @@ function resetCanvas() {
     numberButtons.forEach(button => {
         button.classList.remove('selected', 'wrong', 'not-selected', 'correct');
     });
+    additionDiv.classList.add('hidden');
+    augendElement.innerText = '';
+    addendElement.innerText = '';
+    sumElement.innerText = '';
+
     const predictionsDiv = document.getElementById('predictions');
     predictionsDiv.innerHTML = '';
     if (chart) {
@@ -229,6 +240,18 @@ function randomizeExpected() {
     expectedInput.value = randomValue;
     numberButtons.forEach(button => button.classList.remove('selected'));
     numberButtons[randomValue].classList.add('selected');
+}
+
+function randomizeAddition() {
+    const randomAugend = Math.floor(Math.random() * 10);
+    const randomAddend = Math.floor(Math.random() * (10 - randomAugend));
+    expectedInput.value = randomAugend + randomAddend;
+    numberButtons.forEach(button => button.classList.remove('selected'));
+    numberButtons[randomAugend + randomAddend].classList.add('selected');
+    augendElement.innerText = String(randomAugend);
+    addendElement.innerText = String(randomAddend);
+    sumElement.innerText = String(randomAugend + randomAddend);
+    additionDiv.classList.remove('hidden');
 }
 
 function removeTransparency(img) {

@@ -105,3 +105,18 @@ canvas {
     text-align: center;
     color: red;
 }
+
+.addition {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+#augend, #addend, #sum {
+    margin: 0 10px;
+}
+
+.addition.hidden {
+    display: none;
+}

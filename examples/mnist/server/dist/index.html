@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNIST Drawing Test</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 <div class="container">
@@ -28,8 +29,16 @@
     <div class="buttons-container">
         <button class="button" id="resetButton">Reset</button>
         <button class="button" id="randomButton">Random</button>
+        <button class="button" id="additionButton">Addition</button>
         <button class="button" id="appendButton">Append</button>
         <button class="button train" id="trainButton">Train</button>
+    </div>
+    <div id="addition" class="addition hidden">
+        <div id="augend"></div>
+        +
+        <div id="addend"></div>
+        =
+        <div id="sum"></div>
     </div>
     <div id="predictions"></div>
     <canvas id="predictionGraph" width="400" height="200"></canvas>
