@@ -59,8 +59,8 @@ func Load(path string) (*Neural, error) {
 
 type TrainingConfig struct {
 	Epochs      int
-	TrainingSet string
-	TestSet     string
+	TrainingSet training.Examples
+	TestSet     training.Examples
 	Iterations  int
 	Trainer     training.Trainer
 }
@@ -89,31 +89,22 @@ func Decode(prediction []float64) int {
 }
 
 func (n *Neural) Train(config TrainingConfig) error {
-	train, err := load(config.TrainingSet)
-	if err != nil {
-		panic(err)
-	}
-	test, err := load(config.TestSet)
-	if err != nil {
-		panic(err)
-	}
-
-	for i := range train {
-		for j := range train[i].Input {
-			train[i].Input[j] = train[i].Input[j] / 255
+	for i := range config.TrainingSet {
+		for j := range config.TrainingSet[i].Input {
+			config.TrainingSet[i].Input[j] = config.TrainingSet[i].Input[j] / 255
 		}
 	}
-	for i := range test {
-		for j := range test[i].Input {
-			test[i].Input[j] = test[i].Input[j] / 255
+	for i := range config.TestSet {
+		for j := range config.TestSet[i].Input {
+			config.TestSet[i].Input[j] = config.TestSet[i].Input[j] / 255
 		}
 	}
-	test.Shuffle()
-	train.Shuffle()
+	fmt.Printf("training: %d, val: %d, test: %d\n", len(config.TrainingSet), len(config.TestSet), len(config.TestSet))
 
-	fmt.Printf("training: %d, val: %d, test: %d\n", len(train), len(test), len(test))
+	config.TestSet.Shuffle()
+	config.TrainingSet.Shuffle()
 
-	expected := deep.ArgMax(test[0].Response)
+	expected := deep.ArgMax(config.TestSet[0].Response)
 	start := time.Now()
 
 	green := lipgloss.NewStyle().Foreground(lipgloss.Color("#00ff00"))
@@ -121,9 +112,9 @@ func (n *Neural) Train(config TrainingConfig) error {
 
 	fmt.Printf("expected: %v\n", expected)
 
-	fmt.Println(String(test[0].Input))
+	fmt.Println(String(config.TestSet[0].Input))
 
-	prediction := n.network().Predict(test[0].Input)
+	prediction := n.network().Predict(config.TestSet[0].Input)
 	predictedIndex := deep.ArgMax(prediction)
 
 	out := fmt.Sprintf("\n\noutput: %d (%v)\n%v\n", predictedIndex, predictedIndex == expected, prediction)
@@ -135,7 +126,7 @@ func (n *Neural) Train(config TrainingConfig) error {
 	fmt.Println(out)
 
 	trainStart := time.Now()
-	config.Trainer.Train(n.network(), train, test, config.Iterations)
+	config.Trainer.Train(n.network(), config.TrainingSet, config.TestSet, config.Iterations)
 	fmt.Printf("train time: %s/%s\n", time.Since(trainStart), time.Since(start))
 
 	return nil
@@ -217,7 +208,7 @@ func toColor(in float64) lipgloss.Color {
 	return lipgloss.Color(fmt.Sprintf("#%02x%02x%02x", n, n, n))
 }
 
-func load(path string) (training.Examples, error) {
+func Examples(path string) (training.Examples, error) {
 	f, err := os.Open(path)
 	defer f.Close()
 	if err != nil {

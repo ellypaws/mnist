@@ -118,11 +118,16 @@ func Train(c echo.Context) error {
 	if neuralNetwork == nil {
 		return c.JSON(500, wrapError("neural network not initialized", nil))
 	}
+	correction, err := mnist.Examples(correctionSet)
+	if err != nil {
+		return c.JSON(500, wrapError("could not load correction set", err))
+	}
+	trainSet, testSet := correction.Split(0.7)
 
 	config := mnist.TrainingConfig{
 		Epochs:      1,
-		TrainingSet: correctionSet,
-		TestSet:     correctionSet,
+		TrainingSet: trainSet,
+		TestSet:     testSet,
 		Iterations:  25,
 		Trainer:     mnist.Trainer(),
 	}

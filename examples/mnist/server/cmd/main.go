@@ -42,10 +42,19 @@ func main() {
 
 func initialize() *mnist.Neural {
 	network := mnist.New(inputSize)
-	err := network.Train(mnist.TrainingConfig{
+	train, err := mnist.Examples(trainingSet)
+	if err != nil {
+		panic(err)
+	}
+	test, err := mnist.Examples(testSet)
+	if err != nil {
+		panic(err)
+	}
+
+	err = network.Train(mnist.TrainingConfig{
 		Epochs:      epochs,
-		TrainingSet: trainingSet,
-		TestSet:     testSet,
+		TrainingSet: train,
+		TestSet:     test,
 		Iterations:  iterations,
 		Trainer:     mnist.Trainer(),
 	})
