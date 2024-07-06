@@ -349,7 +349,7 @@ function antiAlias(img) {
     return canvas;
 }
 
-function contrast(img) {
+function contrast(img, strength) {
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
@@ -359,10 +359,12 @@ function contrast(img) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
+    const factor = (259 * (strength + 255)) / (255 * (259 - strength));
+
     for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, data[i] * 2);     // Red
-        data[i + 1] = Math.min(255, data[i + 1] * 2); // Green
-        data[i + 2] = Math.min(255, data[i + 2] * 2); // Blue
+        data[i] = Math.min(255, factor * (data[i] - 128) + 128);     // Red
+        data[i + 1] = Math.min(255, factor * (data[i + 1] - 128) + 128); // Green
+        data[i + 2] = Math.min(255, factor * (data[i + 2] - 128) + 128); // Blue
     }
 
     ctx.putImageData(imageData, 0, 0);
@@ -373,6 +375,6 @@ function processImageForAPI(img) {
     const noTransparencyCanvas = removeTransparency(img);
     const invertedCanvas = invertColors(noTransparencyCanvas);
     const antiAliasedCanvas = antiAlias(invertedCanvas);
-    const contrastCanvas = contrast(antiAliasedCanvas);
+    const contrastCanvas = contrast(antiAliasedCanvas, 0.5);
     return contrastCanvas;
 }
