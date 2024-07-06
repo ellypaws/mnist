@@ -262,7 +262,7 @@ func toUint8(in float64) uint8 {
 func ToUint8(in []float64) []float64 {
 	var out = make([]float64, len(in))
 	for i := 0; i < len(in); i++ {
-		out = append(out, float64(toUint8(in[i])))
+		out[i] = float64(toUint8(in[i]))
 	}
 	return out
 }
