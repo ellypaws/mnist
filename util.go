@@ -1,6 +1,9 @@
 package deep
 
-import "math"
+import (
+	"math"
+	"slices"
+)
 
 // Mean of xx
 func Mean(xx []float64) float64 {
@@ -47,7 +50,7 @@ func Standardize(xx []float64) {
 
 // Normalize scales to (0,1)
 func Normalize(xx []float64) {
-	min, max := Min(xx), Max(xx)
+	min, max := slices.Min(xx), slices.Max(xx)
 	for i, x := range xx {
 		xx[i] = (x - min) / (max - min)
 	}

@@ -1,5 +1,10 @@
 package deep
 
+import (
+	"fmt"
+	"math"
+)
+
 // Neuron is a neural network node
 type Neuron struct {
 	A     ActivationType `json:"-"`
@@ -19,6 +24,11 @@ func (n *Neuron) fire() {
 	var sum float64
 	for _, s := range n.In {
 		sum += s.Out
+		if math.IsNaN(sum) {
+			fmt.Println("neuron is NaN")
+			sum = 0
+			break
+		}
 	}
 	n.Value = n.Activate(sum)
 

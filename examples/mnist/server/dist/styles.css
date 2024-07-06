@@ -1,0 +1,43 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #000;
+}
+
+canvas {
+    border: 1px solid #000;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+
+#predictions {
+    margin-top: 10px;
+}
+
+#resetButton, #trainButton {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#resetButton:hover, #trainButton:hover {
+    background-color: #d32f2f;
+}
+
+#previewCanvas {
+    image-rendering: pixelated;
+}
