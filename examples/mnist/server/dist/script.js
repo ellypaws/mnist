@@ -9,12 +9,14 @@ canvas.addEventListener('mousemove', draw);
 
 const expectedInput = document.getElementById('expected');
 const resetButton = document.getElementById('resetButton');
+const trainButton = document.getElementById('trainButton');
 const predictionGraph = document.getElementById('predictionGraph').getContext('2d');
 const previewCanvas = document.getElementById('previewCanvas');
 const previewCtx = previewCanvas.getContext('2d');
 let chart;
 
 resetButton.addEventListener('click', resetCanvas);
+trainButton.addEventListener('click', sendTrainingData);
 
 function startDrawing(event) {
     drawing = true;
@@ -78,6 +80,40 @@ function sendDrawingToServer() {
         .then(response => response.json())
         .then(data => {
             displayPredictions(data);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function sendTrainingData() {
+    const scaledCanvas = document.createElement('canvas');
+    const scaledCtx = scaledCanvas.getContext('2d');
+    scaledCanvas.width = 28;
+    scaledCanvas.height = 28;
+
+    scaledCtx.drawImage(canvas, 0, 0, 28, 28);
+
+    // Process the image
+    const processedCanvas = processImageForAPI(scaledCanvas);
+
+    const imageData = processedCanvas.toDataURL('image/png');
+    const expected = expectedInput.value ? parseInt(expectedInput.value) : null;
+
+    const requestBody = {
+        image: imageData,
+        expected: expected
+    };
+
+    fetch('http://localhost:1323/v1/train', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+        .then(response => response.blob())
+        .then(blob => {
+            console.log('Training data sent successfully');
+            // Here you can handle the response, which is a CSV file, if needed.
         })
         .catch(error => console.error('Error:', error));
 }
