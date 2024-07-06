@@ -198,6 +198,7 @@ function resetCanvas() {
         chart.destroy();
         chart = null;
     }
+    randomizeExpected();
 }
 
 function randomizeExpected() {
