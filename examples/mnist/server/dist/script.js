@@ -22,9 +22,11 @@ resetButton.addEventListener('click', resetCanvas);
 randomButton.addEventListener('click', randomizeExpected);
 trainButton.addEventListener('click', startTraining);
 appendButton.addEventListener('click', sendTrainingData);
-numberButtons.forEach(button => button.addEventListener('click', () => {
+numberButtons.forEach(button => button.onclick = () => {
     expectedInput.value = button.getAttribute('data-number');
-}));
+    numberButtons.forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+});
 
 function startDrawing(event) {
     drawing = true;
@@ -87,6 +89,7 @@ function sendDrawingToServer() {
     })
         .then(response => response.json())
         .then(data => {
+            updateButtonStates(data.prediction);
             displayPredictions(data);
         })
         .catch(error => console.error('Error:', error));
@@ -188,10 +191,30 @@ function displayPredictions(data) {
     });
 }
 
+function updateButtonStates(prediction) {
+    numberButtons.forEach(button => {
+        const buttonNumber = button.getAttribute('data-number');
+        button.classList.remove('wrong', 'not-selected', 'correct');
+
+        if (button.classList.contains('selected')) {
+            if (prediction == buttonNumber) {
+                button.classList.add('correct');
+            } else {
+                button.classList.add('wrong');
+            }
+        } else if (prediction == buttonNumber) {
+            button.classList.add('not-selected');
+        }
+    });
+}
+
 function resetCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
     expectedInput.value = '';
+    numberButtons.forEach(button => {
+        button.classList.remove('selected', 'wrong', 'not-selected', 'correct');
+    });
     const predictionsDiv = document.getElementById('predictions');
     predictionsDiv.innerHTML = '';
     if (chart) {
@@ -204,6 +227,8 @@ function resetCanvas() {
 function randomizeExpected() {
     const randomValue = Math.floor(Math.random() * 10);
     expectedInput.value = randomValue;
+    numberButtons.forEach(button => button.classList.remove('selected'));
+    numberButtons[randomValue].classList.add('selected');
 }
 
 function removeTransparency(img) {
