@@ -82,7 +82,10 @@ func Predict(c echo.Context) error {
 	return c.JSON(200, resp)
 }
 
-const correctionSet = "dist/mnist_correction.csv"
+const (
+	correctionSet     = "dist/mnist_correction.csv"
+	correctionWeights = "dist/correction.json"
+)
 
 func Add(c echo.Context) error {
 	var req predictRequest
@@ -112,7 +115,26 @@ func Add(c echo.Context) error {
 }
 
 func Train(c echo.Context) error {
-	return c.JSON(500, wrapError("not implemented", nil))
+	if neuralNetwork == nil {
+		return c.JSON(500, wrapError("neural network not initialized", nil))
+	}
+
+	config := mnist.TrainingConfig{
+		Epochs:      10,
+		TrainingSet: correctionSet,
+		TestSet:     correctionSet,
+		Iterations:  1,
+	}
+
+	if err := neuralNetwork.Train(config); err != nil {
+		return c.JSON(500, wrapError("could not train neural network", err))
+	}
+
+	if err := neuralNetwork.Save(correctionWeights); err != nil {
+		return c.JSON(500, wrapError("could not save neural network", err))
+	}
+
+	return c.File(correctionWeights)
 }
 
 func wrapError(message string, err error) map[string]string {

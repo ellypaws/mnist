@@ -47,13 +47,13 @@ canvas {
     margin-top: 10px;
 }
 
-.buttons {
+.buttons-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#resetButton, #randomButton, #trainButton {
+.button {
     margin: 10px;
     padding: 5px 10px;
     background-color: #f44336;

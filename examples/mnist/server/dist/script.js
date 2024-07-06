@@ -11,6 +11,7 @@ const expectedInput = document.getElementById('expected');
 const resetButton = document.getElementById('resetButton');
 const randomButton = document.getElementById('randomButton');
 const trainButton = document.getElementById('trainButton');
+const appendButton = document.getElementById('appendButton');
 const numberButtons = document.querySelectorAll('.number-button');
 const predictionGraph = document.getElementById('predictionGraph').getContext('2d');
 const previewCanvas = document.getElementById('previewCanvas');
@@ -19,7 +20,8 @@ let chart;
 
 resetButton.addEventListener('click', resetCanvas);
 randomButton.addEventListener('click', randomizeExpected);
-trainButton.addEventListener('click', sendTrainingData);
+trainButton.addEventListener('click', startTraining);
+appendButton.addEventListener('click', sendTrainingData);
 numberButtons.forEach(button => button.addEventListener('click', () => {
     expectedInput.value = button.getAttribute('data-number');
 }));
@@ -90,6 +92,18 @@ function sendDrawingToServer() {
         .catch(error => console.error('Error:', error));
 }
 
+function startTraining() {
+    fetch('http://localhost:1323/v1/train', {
+        method: 'POST'
+    })
+        .then(response => response.blob())
+        .then(blob => {
+            console.log('Training finished successfully');
+            // Here you can handle the response, which is a json file of the weights, if needed.
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 function sendTrainingData() {
     const scaledCanvas = document.createElement('canvas');
     const scaledCtx = scaledCanvas.getContext('2d');
@@ -126,7 +140,7 @@ function sendTrainingData() {
 
 function debounce(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
@@ -247,9 +261,9 @@ function antiAlias(img) {
 
     // Kernel for a simple blur filter
     const kernel = [
-        1/16, 2/16, 1/16,
-        2/16, 4/16, 2/16,
-        1/16, 2/16, 1/16
+        1 / 16, 2 / 16, 1 / 16,
+        2 / 16, 4 / 16, 2 / 16,
+        1 / 16, 2 / 16, 1 / 16
     ];
     const half = Math.floor(Math.sqrt(kernel.length) / 2);
 
