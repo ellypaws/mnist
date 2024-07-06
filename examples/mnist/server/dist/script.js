@@ -154,8 +154,8 @@ function displayPredictions(data) {
     const correctSymbol = data.correct ? '✔️' : '❌';
 
     predictionsDiv.innerHTML = `
-        <p>Prediction: ${data.prediction}</p>
-        <p>Expected: ${data.expected != null ? data.expected : 'N/A'}</p>
+        <b>Prediction</b>: ${data.prediction}
+        <b>Expected</b>: ${data.expected != null ? data.expected : 'N/A'}
         <p class="${correctClass}">Correct: ${correctSymbol}</p>
     `;
 

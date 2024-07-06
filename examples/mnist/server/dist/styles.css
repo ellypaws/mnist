@@ -71,9 +71,12 @@ canvas {
 }
 
 .correct-true {
+    /*centering the text*/
+    text-align: center;
     color: green;
 }
 
 .correct-false {
+    text-align: center;
     color: red;
 }
