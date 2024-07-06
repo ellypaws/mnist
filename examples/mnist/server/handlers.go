@@ -120,10 +120,11 @@ func Train(c echo.Context) error {
 	}
 
 	config := mnist.TrainingConfig{
-		Epochs:      10,
+		Epochs:      1,
 		TrainingSet: correctionSet,
 		TestSet:     correctionSet,
-		Iterations:  1,
+		Iterations:  25,
+		Trainer:     mnist.Trainer(),
 	}
 
 	if err := neuralNetwork.Train(config); err != nil {

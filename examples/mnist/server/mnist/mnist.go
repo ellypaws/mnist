@@ -62,6 +62,7 @@ type TrainingConfig struct {
 	TrainingSet string
 	TestSet     string
 	Iterations  int
+	Trainer     training.Trainer
 }
 
 func (n *Neural) Save(path string) error {
@@ -110,9 +111,6 @@ func (n *Neural) Train(config TrainingConfig) error {
 	test.Shuffle()
 	train.Shuffle()
 
-	//trainer := training.NewBatchTrainer(training.NewSGD(0.01, 0.5, 1e-6, true), 1, 200, 8)
-	trainer := training.NewBatchTrainer(training.NewAdam(0.02, 0.9, 0.999, 1e-8), 1, 200, 16)
-
 	fmt.Printf("training: %d, val: %d, test: %d\n", len(train), len(test), len(test))
 
 	expected := deep.ArgMax(test[0].Response)
@@ -123,30 +121,35 @@ func (n *Neural) Train(config TrainingConfig) error {
 
 	fmt.Printf("expected: %v\n", expected)
 
-	for epoch := range config.Epochs {
-		if epoch == 0 {
-			fmt.Println(String(test[0].Input))
-		}
+	fmt.Println(String(test[0].Input))
 
-		prediction := n.network().Predict(test[0].Input)
-		predictedIndex := deep.ArgMax(prediction)
+	prediction := n.network().Predict(test[0].Input)
+	predictedIndex := deep.ArgMax(prediction)
 
-		out := fmt.Sprintf("\n\nepoch: %d\noutput: %d (%v)\n%v\n", epoch, predictedIndex, predictedIndex == expected, prediction)
-		if predictedIndex == expected {
-			out = green.Render(out)
-		} else {
-			out = red.Render(out)
-		}
-		fmt.Println(out)
-
-		if epoch < config.Epochs-1 {
-			trainStart := time.Now()
-			trainer.Train(n.network(), train, test, config.Iterations)
-			fmt.Printf("train time: %s/%s\n", time.Since(trainStart), time.Since(start))
-		}
+	out := fmt.Sprintf("\n\noutput: %d (%v)\n%v\n", predictedIndex, predictedIndex == expected, prediction)
+	if predictedIndex == expected {
+		out = green.Render(out)
+	} else {
+		out = red.Render(out)
 	}
+	fmt.Println(out)
+
+	trainStart := time.Now()
+	config.Trainer.Train(n.network(), train, test, config.Iterations)
+	fmt.Printf("train time: %s/%s\n", time.Since(trainStart), time.Since(start))
 
 	return nil
+}
+
+var trainer *training.BatchTrainer
+
+func Trainer() *training.BatchTrainer {
+	if trainer != nil {
+		return trainer
+	}
+	//trainer = training.NewBatchTrainer(training.NewSGD(0.01, 0.5, 1e-6, true), 1, 200, 8)
+	trainer = training.NewBatchTrainer(training.NewAdam(0.02, 0.9, 0.999, 1e-8), 1, 200, 16)
+	return trainer
 }
 
 func String(in []float64) string {

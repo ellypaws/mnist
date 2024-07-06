@@ -14,8 +14,8 @@ const (
 	inputSize = 28 * 28
 	weights   = "dist/weights.json"
 
-	epochs      = 10
-	iterations  = 1
+	epochs      = 1
+	iterations  = 25
 	trainingSet = "dist/mnist_train.csv"
 	testSet     = "dist/mnist_test.csv"
 
@@ -47,6 +47,7 @@ func initialize() *mnist.Neural {
 		TrainingSet: trainingSet,
 		TestSet:     testSet,
 		Iterations:  iterations,
+		Trainer:     mnist.Trainer(),
 	})
 	if err != nil {
 		panic(err)
