@@ -9,14 +9,20 @@ canvas.addEventListener('mousemove', draw);
 
 const expectedInput = document.getElementById('expected');
 const resetButton = document.getElementById('resetButton');
+const randomButton = document.getElementById('randomButton');
 const trainButton = document.getElementById('trainButton');
+const numberButtons = document.querySelectorAll('.number-button');
 const predictionGraph = document.getElementById('predictionGraph').getContext('2d');
 const previewCanvas = document.getElementById('previewCanvas');
 const previewCtx = previewCanvas.getContext('2d');
 let chart;
 
 resetButton.addEventListener('click', resetCanvas);
+randomButton.addEventListener('click', randomizeExpected);
 trainButton.addEventListener('click', sendTrainingData);
+numberButtons.forEach(button => button.addEventListener('click', () => {
+    expectedInput.value = button.getAttribute('data-number');
+}));
 
 function startDrawing(event) {
     drawing = true;
@@ -126,14 +132,17 @@ function debounce(func, wait) {
     };
 }
 
-const debounceSendDrawingToServer = debounce(sendDrawingToServer, 2000);
+const debounceSendDrawingToServer = debounce(sendDrawingToServer, 500);
 
 function displayPredictions(data) {
     const predictionsDiv = document.getElementById('predictions');
+    const correctClass = data.correct ? 'correct-true' : 'correct-false';
+    const correctSymbol = data.correct ? '✔️' : '❌';
+
     predictionsDiv.innerHTML = `
         <p>Prediction: ${data.prediction}</p>
         <p>Expected: ${data.expected != null ? data.expected : 'N/A'}</p>
-        <p>Correct: ${data.correct != null ? data.correct : 'N/A'}</p>
+        <p class="${correctClass}">Correct: ${correctSymbol}</p>
     `;
 
     const labels = Object.keys(data.predictions).map(key => `Digit ${key}`);
@@ -175,6 +184,11 @@ function resetCanvas() {
         chart.destroy();
         chart = null;
     }
+}
+
+function randomizeExpected() {
+    const randomValue = Math.floor(Math.random() * 10);
+    expectedInput.value = randomValue;
 }
 
 function removeTransparency(img) {

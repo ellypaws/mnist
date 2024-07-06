@@ -21,12 +21,40 @@ canvas {
     margin-bottom: 10px;
 }
 
+.number-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.number-button {
+    width: 30px;
+    height: 30px;
+    margin: 2px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.number-button:hover {
+    background-color: #0056b3;
+}
+
 #predictions {
     margin-top: 10px;
 }
 
-#resetButton, #trainButton {
-    margin-top: 10px;
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#resetButton, #randomButton, #trainButton {
+    margin: 10px;
     padding: 5px 10px;
     background-color: #f44336;
     color: white;
@@ -40,4 +68,12 @@ canvas {
 
 #previewCanvas {
     image-rendering: pixelated;
+}
+
+.correct-true {
+    color: green;
+}
+
+.correct-false {
+    color: red;
 }
