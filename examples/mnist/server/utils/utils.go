@@ -3,9 +3,10 @@ package utils
 import (
 	"bytes"
 	"encoding/base64"
-	"errors"
+	"fmt"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/patrikeh/go-deep/examples/mnist/server/types"
 	"image"
-	"image/color"
 	"image/png"
 	"os"
 	"strings"
@@ -43,25 +44,43 @@ func SaveImage(img image.Image, path string) error {
 	return png.Encode(f, img)
 }
 
-func ImageToTensor(img image.Image) ([]float64, error) {
-	bounds := img.Bounds()
-	width, height := bounds.Max.X, bounds.Max.Y
-	if width != 28 || height != 28 {
-		return nil, errors.New("image must be 28x28 pixels")
-	}
-
-	var tensor []float64
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			c := img.At(x, y)
-			grayColor := color.GrayModel.Convert(c).(color.Gray)
-			tensor = append(tensor, Normalize(grayColor.Y))
+func String[hexable types.Hexable](in []hexable) string {
+	var numberPrint strings.Builder
+	var column int
+	for i, in := range in {
+		if i%28 == 0 {
+			column++
+			numberPrint.WriteString(fmt.Sprintf("\n%2d: ", column))
 		}
+		numberPrint.WriteString(lipgloss.NewStyle().Foreground(toColor(in)).Render("██"))
 	}
-
-	return tensor, nil
+	return numberPrint.String()
 }
 
-func Normalize(color uint8) float64 {
-	return float64(color) / 255.0
+func toColor(in types.Hexable) lipgloss.Color {
+	hex := in.Hex()
+	return lipgloss.Color(fmt.Sprintf("#%s%s%s", hex, hex, hex))
+}
+
+func toUint8(in float64) uint8 {
+	return uint8(in * 255)
+}
+
+func ToUint8(in []float64) []float64 {
+	var out = make([]float64, len(in))
+	for i := 0; i < len(in); i++ {
+		out[i] = float64(toUint8(in[i]))
+	}
+	return out
+}
+
+func DataToTensor[number interface{ ~uint8 | ~float64 }](data []number) []types.Tensor {
+	if data == nil {
+		return nil
+	}
+	var tensors = make([]types.Tensor, len(data))
+	for i, d := range data {
+		tensors[i] = types.ToTensor(d)
+	}
+	return tensors
 }

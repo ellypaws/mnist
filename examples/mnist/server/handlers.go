@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
+	"github.com/patrikeh/go-deep/examples/mnist/server/types"
 	"github.com/patrikeh/go-deep/examples/mnist/server/utils"
 	"github.com/patrikeh/go-deep/training"
 )
@@ -51,7 +52,7 @@ func Predict(c echo.Context) error {
 		return c.JSON(400, utils.WrapError("could not convert image to tensor", err))
 	}
 
-	fmt.Println(mnist.String(tensor))
+	fmt.Println(utils.String(tensor))
 
 	prediction := neuralNetwork.Predict(tensor)
 	predictedIndex := mnist.Decode(prediction)
@@ -96,7 +97,7 @@ func Add(c echo.Context) error {
 	}
 
 	out := training.Example{
-		Input:    mnist.ToUint8(tensor),
+		Input:    utils.ToUint8(types.Coerce[types.Tensor, float64](tensor)),
 		Response: mnist.OneHot(10, float64(*req.Expected)),
 	}
 

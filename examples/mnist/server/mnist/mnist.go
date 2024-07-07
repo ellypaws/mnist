@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/patrikeh/go-deep/examples/mnist/server/types"
+	"github.com/patrikeh/go-deep/examples/mnist/server/utils"
 	"io"
 	"math/rand"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/patrikeh/go-deep/training"
@@ -80,8 +81,8 @@ func (n *Neural) Save(path string) error {
 	return nil
 }
 
-func (n *Neural) Predict(in []float64) []float64 {
-	return n.network().Predict(in)
+func (n *Neural) Predict(in []types.Tensor) []float64 {
+	return n.network().Predict(types.Coerce[types.Tensor, float64](in))
 }
 
 func Decode(prediction []float64) int {
@@ -112,7 +113,7 @@ func (n *Neural) Train(config TrainingConfig) error {
 
 	fmt.Printf("expected: %v\n", expected)
 
-	fmt.Println(String(config.TestSet[0].Input))
+	fmt.Println(utils.String(utils.DataToTensor(config.TestSet[0].Input)))
 
 	prediction := n.network().Predict(config.TestSet[0].Input)
 	predictedIndex := deep.ArgMax(prediction)
@@ -141,19 +142,6 @@ func Trainer() *training.BatchTrainer {
 	//trainer = training.NewBatchTrainer(training.NewSGD(0.01, 0.5, 1e-6, true), 1, 200, 8)
 	trainer = training.NewBatchTrainer(training.NewAdam(0.02, 0.9, 0.999, 1e-8), 1, 200, 16)
 	return trainer
-}
-
-func String(in []float64) string {
-	var numberPrint strings.Builder
-	var column int
-	for i, in := range in {
-		if i%28 == 0 {
-			column++
-			numberPrint.WriteString(fmt.Sprintf("\n%2d: ", column))
-		}
-		numberPrint.WriteString(lipgloss.NewStyle().Foreground(toColor(in)).Render("██"))
-	}
-	return numberPrint.String()
 }
 
 func Append(example training.Example, path string) error {
@@ -203,11 +191,6 @@ func (n *Neural) network() *deep.Neural {
 	return (*deep.Neural)(n)
 }
 
-func toColor(in float64) lipgloss.Color {
-	n := int(in * 255)
-	return lipgloss.Color(fmt.Sprintf("#%02x%02x%02x", n, n, n))
-}
-
 func Examples(path string) (training.Examples, error) {
 	f, err := os.Open(path)
 	defer f.Close()
@@ -247,18 +230,6 @@ func toExample(in []string) training.Example {
 		Response: resEncoded,
 		Input:    features,
 	}
-}
-
-func toUint8(in float64) uint8 {
-	return uint8(in * 255)
-}
-
-func ToUint8(in []float64) []float64 {
-	var out = make([]float64, len(in))
-	for i := 0; i < len(in); i++ {
-		out[i] = float64(toUint8(in[i]))
-	}
-	return out
 }
 
 // OneHot returns a one-hot encoded vector of the given value
