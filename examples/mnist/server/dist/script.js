@@ -371,10 +371,16 @@ function contrast(img, strength) {
     return canvas;
 }
 
+processors = [
+    removeTransparency,
+    invertColors,
+    // antiAlias,
+    img => contrast(img, 0.5)
+];
+
 function processImageForAPI(img) {
-    const noTransparencyCanvas = removeTransparency(img);
-    const invertedCanvas = invertColors(noTransparencyCanvas);
-    const antiAliasedCanvas = antiAlias(invertedCanvas);
-    const contrastCanvas = contrast(antiAliasedCanvas, 0.5);
-    return contrastCanvas;
+    for (const processor of processors) {
+        img = processor(img);
+    }
+    return img;
 }
