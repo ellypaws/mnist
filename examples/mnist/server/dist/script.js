@@ -33,10 +33,10 @@ window.onload = randomizeExpected;
 
 eraseButton.onclick =  eraseCanvas
 resetButton.onclick = resetCanvas;
-randomButton.onclick = randomizeExpected;
-additionButton.onclick = randomizeAddition;
+// randomButton.onclick = randomizeExpected;
+// additionButton.onclick = randomizeAddition;
 trainButton.onclick = startTraining;
-appendButton.onclick = sendTrainingData;
+// appendButton.onclick = sendTrainingData;
 
 numberButtons.forEach(button => button.onclick = () => {
     expectedInput.value = button.getAttribute('data-number');
