@@ -5,6 +5,7 @@ body {
     height: 100%;
     margin: 0;
     background-color: #f0f0f0;
+    font-family: Inter, sans-serif;
 }
 
 .container {
