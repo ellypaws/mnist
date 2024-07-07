@@ -23,6 +23,7 @@ canvas {
     background-color: #fff;
     margin: 10px;
     border-radius: 5px;
+    touch-action: none;
 }
 
 .number-buttons {
