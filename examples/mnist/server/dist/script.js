@@ -8,6 +8,9 @@ let strokes = false;
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('touchstart', startDrawing, {passive: false});
+canvas.addEventListener('touchend', stopDrawing, {passive: false});
+canvas.addEventListener('touchmove', draw, {passive: false});
 
 const expectedInput = document.getElementById('expected');
 const resetButton = document.getElementById('resetButton');
@@ -53,15 +56,16 @@ function stopDrawing() {
 function draw(event) {
     if (!drawing) return;
 
+    const touch = event.touches ? event.touches[0] : event;
     strokes = true;
     ctx.lineWidth = 15;
     ctx.lineCap = 'round';
     ctx.strokeStyle = '#000';
 
-    ctx.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+    ctx.lineTo(touch.clientX - canvas.offsetLeft, touch.clientY - canvas.offsetTop);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+    ctx.moveTo(touch.clientX - canvas.offsetLeft, touch.clientY - canvas.offsetTop);
 }
 
 function sendDrawingToServer() {
