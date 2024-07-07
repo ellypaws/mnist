@@ -112,7 +112,7 @@ func (n *Neural) Train(config TrainingConfig) error {
 
 	fmt.Printf("expected: %v\n", expected)
 
-	fmt.Println(utils.String(utils.DataToTensor(config.TestSet[0].Input)))
+	fmt.Println(utils.String(types.Coerce[float64, types.Tensor](config.TestSet[0].Input)))
 
 	prediction := n.network().Predict(config.TestSet[0].Input)
 	predictedIndex := deep.ArgMax(prediction)
