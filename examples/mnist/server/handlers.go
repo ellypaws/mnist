@@ -1,18 +1,11 @@
 package server
 
 import (
-	"bytes"
-	"encoding/base64"
-	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
+	"github.com/patrikeh/go-deep/examples/mnist/server/utils"
 	"github.com/patrikeh/go-deep/training"
-	"image"
-	"image/color"
-	"image/png"
-	"os"
-	"strings"
 )
 
 func Index(e *echo.Echo) echo.HandlerFunc {
@@ -40,22 +33,22 @@ type predictResponse struct {
 
 func Predict(c echo.Context) error {
 	if neuralNetwork == nil {
-		return c.JSON(500, wrapError("neural network not initialized", nil))
+		return c.JSON(500, utils.WrapError("neural network not initialized", nil))
 	}
 
 	var req predictRequest
 	if err := c.Bind(&req); err != nil {
 		return err
 	}
-	img, err := base64ToImage(req.Image)
+	img, err := utils.Base64ToImage(req.Image)
 	if err != nil {
-		return c.JSON(400, wrapError("invalid image", err))
+		return c.JSON(400, utils.WrapError("invalid image", err))
 	}
-	_ = saveImage(img, "dist/image.png")
+	_ = utils.SaveImage(img, "dist/image.png")
 
-	tensor, err := imageToTensor(img)
+	tensor, err := utils.ImageToTensor(img)
 	if err != nil {
-		return c.JSON(400, wrapError("could not convert image to tensor", err))
+		return c.JSON(400, utils.WrapError("could not convert image to tensor", err))
 	}
 
 	fmt.Println(mnist.String(tensor))
@@ -92,14 +85,14 @@ func Add(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		return err
 	}
-	img, err := base64ToImage(req.Image)
+	img, err := utils.Base64ToImage(req.Image)
 	if err != nil {
-		return c.JSON(400, wrapError("invalid image", err))
+		return c.JSON(400, utils.WrapError("invalid image", err))
 	}
 
-	tensor, err := imageToTensor(img)
+	tensor, err := utils.ImageToTensor(img)
 	if err != nil {
-		return c.JSON(400, wrapError("could not convert image to tensor", err))
+		return c.JSON(400, utils.WrapError("could not convert image to tensor", err))
 	}
 
 	out := training.Example{
@@ -108,7 +101,7 @@ func Add(c echo.Context) error {
 	}
 
 	if err := mnist.Append(out, correctionSet); err != nil {
-		return c.JSON(500, wrapError("could not append to training set", err))
+		return c.JSON(500, utils.WrapError("could not append to training set", err))
 	}
 
 	return c.File(correctionSet)
@@ -116,11 +109,11 @@ func Add(c echo.Context) error {
 
 func Train(c echo.Context) error {
 	if neuralNetwork == nil {
-		return c.JSON(500, wrapError("neural network not initialized", nil))
+		return c.JSON(500, utils.WrapError("neural network not initialized", nil))
 	}
 	correction, err := mnist.Examples(correctionSet)
 	if err != nil {
-		return c.JSON(500, wrapError("could not load correction set", err))
+		return c.JSON(500, utils.WrapError("could not load correction set", err))
 	}
 	trainSet, testSet := correction.Split(0.7)
 
@@ -133,67 +126,12 @@ func Train(c echo.Context) error {
 	}
 
 	if err := neuralNetwork.Train(config); err != nil {
-		return c.JSON(500, wrapError("could not train neural network", err))
+		return c.JSON(500, utils.WrapError("could not train neural network", err))
 	}
 
 	if err := neuralNetwork.Save(correctionWeights); err != nil {
-		return c.JSON(500, wrapError("could not save neural network", err))
+		return c.JSON(500, utils.WrapError("could not save neural network", err))
 	}
 
 	return c.File(correctionWeights)
-}
-
-func wrapError(message string, err error) map[string]string {
-	if err == nil {
-		return nil
-	}
-	return map[string]string{"error": message, "debug": err.Error()}
-}
-
-func base64ToImage(base64Str string) (image.Image, error) {
-	base64Str = strings.TrimPrefix(base64Str, "data:image/png;base64,")
-	data, err := base64.StdEncoding.DecodeString(base64Str)
-	if err != nil {
-		return nil, err
-	}
-
-	img, err := png.Decode(bytes.NewReader(data))
-	if err != nil {
-		return nil, err
-	}
-
-	return img, nil
-}
-
-func saveImage(img image.Image, path string) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	return png.Encode(f, img)
-}
-
-func imageToTensor(img image.Image) ([]float64, error) {
-	bounds := img.Bounds()
-	width, height := bounds.Max.X, bounds.Max.Y
-	if width != 28 || height != 28 {
-		return nil, errors.New("image must be 28x28 pixels")
-	}
-
-	var tensor []float64
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			c := img.At(x, y)
-			grayColor := color.GrayModel.Convert(c).(color.Gray)
-			tensor = append(tensor, normalize(grayColor.Y))
-		}
-	}
-
-	return tensor, nil
-}
-
-func normalize(color uint8) float64 {
-	return float64(color) / 255.0
 }
