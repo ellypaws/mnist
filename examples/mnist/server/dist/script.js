@@ -31,12 +31,13 @@ let chart;
 
 window.onload = randomizeExpected;
 
-eraseButton.addEventListener('click', eraseCanvas);
-resetButton.addEventListener('click', resetCanvas);
-randomButton.addEventListener('click', randomizeExpected);
-additionButton.addEventListener('click', randomizeAddition);
-trainButton.addEventListener('click', startTraining);
-appendButton.addEventListener('click', sendTrainingData);
+eraseButton.onclick =  eraseCanvas
+resetButton.onclick = resetCanvas;
+randomButton.onclick = randomizeExpected;
+additionButton.onclick = randomizeAddition;
+trainButton.onclick = startTraining;
+appendButton.onclick = sendTrainingData;
+
 numberButtons.forEach(button => button.onclick = () => {
     expectedInput.value = button.getAttribute('data-number');
     numberButtons.forEach(btn => btn.classList.remove('selected'));
@@ -118,7 +119,6 @@ function startTraining() {
         .then(response => response.blob())
         .then(blob => {
             console.log('Training finished successfully');
-            // Here you can handle the response, which is a json file of the weights, if needed.
         })
         .catch(error => console.error('Error:', error));
 }
@@ -131,7 +131,6 @@ function sendTrainingData() {
 
     scaledCtx.drawImage(canvas, 0, 0, 28, 28);
 
-    // Process the image
     const processedCanvas = processImageForAPI(scaledCanvas);
 
     const imageData = processedCanvas.toDataURL('image/png');
@@ -152,7 +151,6 @@ function sendTrainingData() {
         .then(response => response.blob())
         .then(blob => {
             console.log('Training data sent successfully');
-            // Here you can handle the response, which is a CSV file, if needed.
         })
         .catch(error => console.error('Error:', error));
 }
