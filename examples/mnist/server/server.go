@@ -18,8 +18,10 @@ func Run(network *mnist.Neural, middlewares ...echo.MiddlewareFunc) error {
 		"/":  handler{Index(e), nil},
 		"/*": handler{Files(e), nil},
 	})
-	registerAs(e.POST, postHandlers)
-	registerAs(e.PUT, putHandlers)
+
+	v1 := e.Group("/v1")
+	registerAs(v1.POST, postHandlers)
+	registerAs(v1.PUT, putHandlers)
 
 	if network != nil {
 		neuralNetwork = network
@@ -29,12 +31,12 @@ func Run(network *mnist.Neural, middlewares ...echo.MiddlewareFunc) error {
 }
 
 var postHandlers = pathHandler{
-	"/v1/predict": handler{Predict, nil},
-	"/v1/train":   handler{Train, nil},
+	"/predict": handler{Predict, nil},
+	"/train":   handler{Train, nil},
 }
 
 var putHandlers = pathHandler{
-	"/v1/train": handler{Add, nil},
+	"/train": handler{Add, nil},
 }
 
 type route = func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
