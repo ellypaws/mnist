@@ -42,6 +42,7 @@ numberButtons.forEach(button => button.onclick = () => {
     expectedInput.value = button.getAttribute('data-number');
     numberButtons.forEach(btn => btn.classList.remove('selected'));
     button.classList.add('selected');
+    drawTemplateNumber()
 });
 
 function startDrawing(event) {
@@ -253,6 +254,7 @@ function randomizeExpected() {
     expectedInput.value = randomValue;
     numberButtons.forEach(button => button.classList.remove('selected'));
     numberButtons[randomValue].classList.add('selected');
+    drawTemplateNumber()
 }
 
 function randomizeAddition() {
@@ -265,6 +267,21 @@ function randomizeAddition() {
     addendElement.innerText = String(randomAddend);
     sumElement.innerText = String(randomAugend + randomAddend);
     additionDiv.classList.remove('hidden');
+}
+
+function drawTemplateNumber() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (strokes) {
+        const savedImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        ctx.putImageData(savedImage, 0, 0);
+    }
+
+    ctx.font = "250px sans-serif";
+    ctx.fillStyle = "rgba(200, 200, 200, 0.3)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(expectedInput.value, canvas.width / 2, canvas.height / 2);
 }
 
 function removeTransparency(img) {
