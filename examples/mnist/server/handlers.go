@@ -10,6 +10,13 @@ import (
 	"slices"
 )
 
+const (
+	correctionSet     = "dist/drawing_data.csv"
+	correctionWeights = "dist/drawing_weights.json"
+
+	iterations = 500
+)
+
 func Index(e *echo.Echo) echo.HandlerFunc {
 	return echo.StaticFileHandler("dist/index.html", e.Filesystem)
 }
@@ -74,11 +81,6 @@ func Predict(c echo.Context) error {
 	return c.JSON(200, resp)
 }
 
-const (
-	correctionSet     = "dist/drawing_data.csv"
-	correctionWeights = "dist/drawing_weights.json"
-)
-
 func Add(c echo.Context) error {
 	var req predictRequest
 	if err := c.Bind(&req); err != nil {
@@ -129,7 +131,7 @@ func Train(c echo.Context) error {
 	config := mnist.TrainingConfig{
 		TrainingSet: trainSet,
 		TestSet:     testSet,
-		Iterations:  25,
+		Iterations:  iterations,
 		Trainer:     mnist.Trainer(),
 	}
 
