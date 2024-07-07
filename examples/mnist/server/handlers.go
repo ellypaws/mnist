@@ -12,10 +12,16 @@ import (
 
 const (
 	correctionSet     = "dist/drawing_data.csv"
-	correctionWeights = "dist/drawing_weights.json"
+	correctionWeights = "dist/correction_weights.json"
 
-	iterations = 500
+	iterations = 100
 )
+
+var synthesizer = utils.SyntheticConfig{
+	Rotate:    &utils.Values{Min: -5, Max: 5},
+	Translate: &utils.Values{Min: -5, Max: 5},
+	Zoom:      &utils.Values{Min: 1.05, Max: 1.15},
+}
 
 func Index(e *echo.Echo) echo.HandlerFunc {
 	return echo.StaticFileHandler("dist/index.html", e.Filesystem)
@@ -114,19 +120,13 @@ func Train(c echo.Context) error {
 		return c.JSON(500, utils.WrapError("could not load correction set", err))
 	}
 
-	synthesizer := utils.SyntheticConfig{
-		Rotate:    &utils.Values{Min: -25., Max: 10.},
-		Translate: &utils.Values{Min: -10., Max: 10.},
-		Zoom:      &utils.Values{Min: 1.05, Max: 1.15},
-	}
-
 	syntheticData := synthesizer.Synthesize(correction)
 
 	allData := append(slices.Clone(correction), syntheticData.Rotated...)
 	allData = append(allData, syntheticData.Translated...)
 	allData = append(allData, syntheticData.Zoomed...)
 
-	trainSet, testSet := allData.Split(0.7)
+	trainSet, testSet := allData.Split(0.8)
 
 	config := mnist.TrainingConfig{
 		TrainingSet: trainSet,
