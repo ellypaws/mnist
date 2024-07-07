@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
-	"github.com/patrikeh/go-deep/examples/mnist/server/utils"
+	"github.com/patrikeh/go-deep/server/mnist"
+	"github.com/patrikeh/go-deep/server/utils"
 )
 
 const dataPath = "dist/drawing_data.csv"

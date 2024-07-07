@@ -3,9 +3,9 @@ package server
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
-	"github.com/patrikeh/go-deep/examples/mnist/server/types"
-	"github.com/patrikeh/go-deep/examples/mnist/server/utils"
+	"github.com/patrikeh/go-deep/server/mnist"
+	"github.com/patrikeh/go-deep/server/types"
+	"github.com/patrikeh/go-deep/server/utils"
 	"github.com/patrikeh/go-deep/training"
 	"slices"
 )

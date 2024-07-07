@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
+	"github.com/patrikeh/go-deep/server/mnist"
 )
 
 var neuralNetwork *mnist.Neural

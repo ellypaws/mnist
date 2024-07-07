@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/patrikeh/go-deep/examples/mnist/server/types"
+	"github.com/patrikeh/go-deep/server/types"
 	"image"
 	"image/png"
 	"math/rand/v2"

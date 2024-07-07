@@ -5,8 +5,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	"github.com/patrikeh/go-deep/examples/mnist/server"
-	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
+	"github.com/patrikeh/go-deep/server"
+	"github.com/patrikeh/go-deep/server/mnist"
 	"os"
 	"time"
 )

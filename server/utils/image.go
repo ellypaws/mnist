@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/patrikeh/go-deep/examples/mnist/server/types"
+	"github.com/patrikeh/go-deep/server/types"
 	"github.com/patrikeh/go-deep/training"
 	"image"
 	"image/color"
