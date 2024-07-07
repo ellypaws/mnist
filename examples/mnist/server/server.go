@@ -7,11 +7,15 @@ import (
 
 var neuralNetwork *mnist.Neural
 
-func Run(network *mnist.Neural, middlewares ...echo.MiddlewareFunc) error {
+func Run(network *mnist.Neural, middlewares []echo.MiddlewareFunc, options ...func(e *echo.Echo)) error {
 	e := echo.New()
 
 	for _, m := range middlewares {
 		e.Use(m)
+	}
+
+	for _, option := range options {
+		option(e)
 	}
 
 	registerAs(e.GET, pathHandler{

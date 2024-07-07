@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	"github.com/patrikeh/go-deep/examples/mnist/server"
 	"github.com/patrikeh/go-deep/examples/mnist/server/mnist"
 	"os"
@@ -34,7 +35,7 @@ func main() {
 		fmt.Println("loaded network")
 	}
 
-	if err := server.Run(network, middlewares...); err != nil {
+	if err := server.Run(network, middlewares, options...); err != nil {
 		panic(err)
 	}
 }
@@ -83,4 +84,11 @@ var middlewares = []echo.MiddlewareFunc{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}),
+}
+
+var options = []func(e *echo.Echo){
+	func(e *echo.Echo) {
+		e.Logger.SetLevel(log.DEBUG)
+		e.Logger.SetHeader(`${time_rfc3339} ${level}	${short_file}:${line}	`)
+	},
 }

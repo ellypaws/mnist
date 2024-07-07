@@ -68,7 +68,15 @@ func Predict(c echo.Context) error {
 	prediction := neuralNetwork.Predict(tensor)
 	predictedIndex := mnist.Decode(prediction)
 
-	c.Logger().Printf("prediction: %d", predictedIndex)
+	if req.Expected != nil {
+		if *req.Expected == predictedIndex {
+			c.Logger().Infof("prediction: %d", predictedIndex)
+		} else {
+			c.Logger().Warnf("prediction: %d, expected: %d", predictedIndex, *req.Expected)
+		}
+	} else {
+		c.Logger().Debugf("prediction: %d", predictedIndex)
+	}
 
 	resp := predictResponse{
 		Prediction:  predictedIndex,
