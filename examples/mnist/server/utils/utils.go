@@ -8,6 +8,7 @@ import (
 	"github.com/patrikeh/go-deep/examples/mnist/server/types"
 	"image"
 	"image/png"
+	"math/rand/v2"
 	"os"
 	"strings"
 )
@@ -55,6 +56,10 @@ func String[hexable types.Hexable](in []hexable) string {
 		numberPrint.WriteString(lipgloss.NewStyle().Foreground(toColor(in)).Render("██"))
 	}
 	return numberPrint.String()
+}
+
+func RandBetween[T float64 | int](min, max T) T {
+	return T(float64(min) + (float64(max)-float64(min))*rand.Float64())
 }
 
 func toColor(in types.Hexable) lipgloss.Color {

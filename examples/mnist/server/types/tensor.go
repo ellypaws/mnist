@@ -46,6 +46,10 @@ func Coerce[from interface{ ~uint8 | ~float64 }, to interface{ ~uint8 | ~float64
 }
 
 func (t Tensor) RGBA() color.RGBA {
-	b := uint8(t.Byte())
+	b := t.Byte()
 	return color.RGBA{R: b, G: b, B: b, A: 255}
+}
+
+func (t Tensor) Gray() color.Gray {
+	return color.Gray{Y: t.Byte()}
 }

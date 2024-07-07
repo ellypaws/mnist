@@ -41,3 +41,7 @@ func ToByte[number interface{ ~uint8 | ~float64 }](t number) Byte {
 func (b Byte) RGBA() color.RGBA {
 	return color.RGBA{R: uint8(b), G: uint8(b), B: uint8(b), A: 255}
 }
+
+func (b Byte) Gray() color.Gray {
+	return color.Gray{Y: uint8(b)}
+}
