@@ -49,7 +49,7 @@ func Standardize(xx []float64) {
 }
 
 // Normalize scales to (0,1)
-func Normalize(xx []float64) {
+func Normalize[f ~float64](xx []f) {
 	min, max := slices.Min(xx), slices.Max(xx)
 	for i, x := range xx {
 		xx[i] = (x - min) / (max - min)
@@ -57,7 +57,7 @@ func Normalize(xx []float64) {
 }
 
 // Min is the smallest element
-func Min(xx []float64) float64 {
+func Min[f ~float64](xx []f) f {
 	min := xx[0]
 	for _, x := range xx {
 		if x < min {
@@ -68,7 +68,7 @@ func Min(xx []float64) float64 {
 }
 
 // Max is the largest element
-func Max(xx []float64) float64 {
+func Max[f ~float64](xx []f) f {
 	max := xx[0]
 	for _, x := range xx {
 		if x > max {
@@ -79,7 +79,7 @@ func Max(xx []float64) float64 {
 }
 
 // ArgMax is the index of the largest element
-func ArgMax(xx []float64) int {
+func ArgMax[f ~float64](xx []f) int {
 	max, idx := xx[0], 0
 	for i, x := range xx {
 		if x > max {
@@ -90,7 +90,7 @@ func ArgMax(xx []float64) int {
 }
 
 // Sgn is signum
-func Sgn(x float64) float64 {
+func Sgn[f ~float64](x f) f {
 	switch {
 	case x < 0:
 		return -1.0
@@ -101,7 +101,7 @@ func Sgn(x float64) float64 {
 }
 
 // Sum is sum
-func Sum(xx []float64) (sum float64) {
+func Sum[f ~float64](xx []f) (sum f) {
 	for _, x := range xx {
 		sum += x
 	}
@@ -109,12 +109,12 @@ func Sum(xx []float64) (sum float64) {
 }
 
 // Softmax is the softmax function
-func Softmax(xx []float64) []float64 {
-	out := make([]float64, len(xx))
-	var sum float64
+func Softmax[f ~float64](xx []f) []f {
+	out := make([]f, len(xx))
+	var sum f
 	max := Max(xx)
 	for i, x := range xx {
-		out[i] = math.Exp(x - max)
+		out[i] = f(math.Exp(float64(x - max)))
 		sum += out[i]
 	}
 	for i := range out {
@@ -124,13 +124,13 @@ func Softmax(xx []float64) []float64 {
 }
 
 // Round to nearest integer
-func Round(x float64) float64 {
-	return math.Floor(x + .5)
+func Round[f ~float64](x f) f {
+	return f(math.Floor(float64(x + .5)))
 }
 
 // Dot product
-func Dot(xx, yy []float64) float64 {
-	var p float64
+func Dot[f ~float64](xx, yy []f) f {
+	var p f
 	for i := range xx {
 		p += xx[i] * yy[i]
 	}
