@@ -140,7 +140,7 @@ func (c SyntheticConfig) Synthesize(data []training.Example) SyntheticData {
 			rotated := RotateImage(img, RandBetween(c.Rotate.Min, c.Rotate.Max))
 			syntheticData.Rotated = append(syntheticData.Rotated,
 				training.Example{
-					Input:    types.Coerce[types.Tensor, float64](ImageToTensor(rotated)),
+					Input:    types.Coerce[types.Byte, float64](ImageToBytes(rotated)),
 					Response: data[i].Response,
 				},
 			)
@@ -151,7 +151,7 @@ func (c SyntheticConfig) Synthesize(data []training.Example) SyntheticData {
 			translated := Translate(img, int(RandBetween(c.Translate.Min, c.Translate.Max)), int(RandBetween(c.Translate.Min, c.Translate.Max)))
 			syntheticData.Translated = append(syntheticData.Translated,
 				training.Example{
-					Input:    types.Coerce[types.Tensor, float64](ImageToTensor(translated)),
+					Input:    types.Coerce[types.Byte, float64](ImageToBytes(translated)),
 					Response: data[i].Response,
 				},
 			)
@@ -161,7 +161,7 @@ func (c SyntheticConfig) Synthesize(data []training.Example) SyntheticData {
 			zoomed := ZoomImage(img, RandBetween(c.Zoom.Min, c.Zoom.Max))
 			syntheticData.Zoomed = append(syntheticData.Zoomed,
 				training.Example{
-					Input:    types.Coerce[types.Tensor, float64](ImageToTensor(zoomed)),
+					Input:    types.Coerce[types.Byte, float64](ImageToBytes(zoomed)),
 					Response: data[i].Response,
 				},
 			)
