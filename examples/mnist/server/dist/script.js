@@ -13,6 +13,7 @@ canvas.addEventListener('touchend', stopDrawing, {passive: false});
 canvas.addEventListener('touchmove', draw, {passive: false});
 
 const expectedInput = document.getElementById('expected');
+const eraseButton = document.getElementById('eraseButton');
 const resetButton = document.getElementById('resetButton');
 const randomButton = document.getElementById('randomButton');
 const additionButton = document.getElementById('additionButton');
@@ -28,6 +29,9 @@ const previewCanvas = document.getElementById('previewCanvas');
 const previewCtx = previewCanvas.getContext('2d');
 let chart;
 
+window.onload = randomizeExpected;
+
+eraseButton.addEventListener('click', eraseCanvas);
 resetButton.addEventListener('click', resetCanvas);
 randomButton.addEventListener('click', randomizeExpected);
 additionButton.addEventListener('click', randomizeAddition);
@@ -218,6 +222,11 @@ function updateButtonStates(prediction) {
             button.classList.add('not-selected');
         }
     });
+}
+
+function eraseCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
 }
 
 function resetCanvas() {

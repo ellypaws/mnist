@@ -10,9 +10,11 @@
 <body>
 <div class="container">
     <canvas id="drawingCanvas" width="280" height="280"></canvas>
+    <button class="button" id="eraseButton">Erase</button>
     <div>
-        <label for="expected">Expected:</label>
+        <label for="expected">Expected (optional):</label>
         <input type="number" id="expected" name="expected" min="0" max="9">
+
     </div>
     <div class="number-buttons">
         <button class="number-button" data-number="0">0</button>
@@ -27,7 +29,7 @@
         <button class="number-button" data-number="9">9</button>
     </div>
     <div class="buttons-container">
-        <button class="button" id="resetButton">Reset</button>
+        <button class="button" id="resetButton">Reset All</button>
         <button class="button" id="randomButton">Random</button>
         <button class="button" id="additionButton">Addition</button>
         <button class="button" id="appendButton">Append</button>
