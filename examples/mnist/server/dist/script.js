@@ -1,3 +1,5 @@
+const apiUrl = '';
+
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
 let drawing = false;
@@ -86,7 +88,7 @@ function sendDrawingToServer() {
         expected: expected
     };
 
-    fetch('http://localhost:1323/v1/predict', {
+    fetch(apiUrl + '/v1/predict', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -102,7 +104,7 @@ function sendDrawingToServer() {
 }
 
 function startTraining() {
-    fetch('http://localhost:1323/v1/train', {
+    fetch(apiUrl + '/v1/train', {
         method: 'POST'
     })
         .then(response => response.blob())
@@ -132,7 +134,7 @@ function sendTrainingData() {
         expected: expected
     };
 
-    fetch('http://localhost:1323/v1/train', {
+    fetch(apiUrl + '/v1/train', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
