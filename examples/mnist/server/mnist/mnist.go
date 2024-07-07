@@ -59,7 +59,6 @@ func Load(path string) (*Neural, error) {
 }
 
 type TrainingConfig struct {
-	Epochs      int
 	TrainingSet training.Examples
 	TestSet     training.Examples
 	Iterations  int

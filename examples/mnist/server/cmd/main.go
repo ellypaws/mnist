@@ -14,8 +14,7 @@ const (
 	inputSize = 28 * 28
 	weights   = "dist/weights.json"
 
-	epochs      = 1
-	iterations  = 25
+	iterations  = 5
 	trainingSet = "dist/mnist_train.csv"
 	testSet     = "dist/mnist_test.csv"
 
@@ -52,7 +51,6 @@ func initialize() *mnist.Neural {
 	}
 
 	err = network.Train(mnist.TrainingConfig{
-		Epochs:      epochs,
 		TrainingSet: train,
 		TestSet:     test,
 		Iterations:  iterations,

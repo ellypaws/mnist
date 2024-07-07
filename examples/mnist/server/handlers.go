@@ -113,7 +113,6 @@ func Train(c echo.Context) error {
 	trainSet, testSet := correction.Split(0.7)
 
 	config := mnist.TrainingConfig{
-		Epochs:      1,
 		TrainingSet: trainSet,
 		TestSet:     testSet,
 		Iterations:  25,
