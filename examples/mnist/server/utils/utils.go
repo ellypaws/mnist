@@ -67,18 +67,6 @@ func toColor(in types.Hexable) lipgloss.Color {
 	return lipgloss.Color(fmt.Sprintf("#%s%s%s", hex, hex, hex))
 }
 
-func toUint8(in float64) uint8 {
-	return uint8(in * 255)
-}
-
-func ToUint8(in []float64) []float64 {
-	var out = make([]float64, len(in))
-	for i := 0; i < len(in); i++ {
-		out[i] = float64(toUint8(in[i]))
-	}
-	return out
-}
-
 func DataToTensor[number interface{ ~uint8 | ~float64 }](data []number) []types.Tensor {
 	if data == nil {
 		return nil

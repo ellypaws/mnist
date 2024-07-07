@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/patrikeh/go-deep/examples/mnist/server/types"
+	"github.com/patrikeh/go-deep/training"
 	"image"
 	"image/color"
 	"math"
@@ -71,15 +72,19 @@ func RotateImage(img image.Image, degrees float64) image.Image {
 func ZoomImage(img image.Image, factor float64) image.Image {
 	bounds := img.Bounds()
 	width, height := bounds.Dx(), bounds.Dy()
+	centerX, centerY := width/2, height/2
 
-	newWidth, newHeight := int(float64(width)*factor), int(float64(height)*factor)
-	newImg := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+	newImg := image.NewRGBA(image.Rect(0, 0, width, height))
 
-	for y := 0; y < newHeight; y++ {
-		for x := 0; x < newWidth; x++ {
-			srcX, srcY := int(float64(x)/factor), int(float64(y)/factor)
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			srcX := centerX + int(float64(x-centerX)/factor)
+			srcY := centerY + int(float64(y-centerY)/factor)
+
 			if srcX >= 0 && srcX < width && srcY >= 0 && srcY < height {
 				newImg.Set(x, y, img.At(srcX, srcY))
+			} else {
+				newImg.Set(x, y, color.RGBA{A: 255})
 			}
 		}
 	}
@@ -102,6 +107,68 @@ func Translate(img image.Image, deltaX, deltaY int) image.Image {
 	}
 
 	return newImg
+}
+
+type SyntheticConfig struct {
+	Rotate    *Values
+	Translate *Values
+	Zoom      *Values
+}
+
+type Values struct {
+	Min float64
+	Max float64
+}
+
+type SyntheticData struct {
+	Rotated    []training.Example
+	Translated []training.Example
+	Zoomed     []training.Example
+}
+
+func (c SyntheticConfig) Synthesize(data []training.Example) SyntheticData {
+	var syntheticData SyntheticData
+
+	var images = make([]image.Image, len(data))
+	for i, example := range data {
+		tensors := DataToTensor(example.Input)
+		images[i] = TensorToImage(tensors)
+	}
+
+	for i, img := range images {
+		if c.Rotate != nil {
+			rotated := RotateImage(img, RandBetween(c.Rotate.Min, c.Rotate.Max))
+			syntheticData.Rotated = append(syntheticData.Rotated,
+				training.Example{
+					Input:    types.Coerce[types.Tensor, float64](ImageToTensor(rotated)),
+					Response: data[i].Response,
+				},
+			)
+
+		}
+
+		if c.Translate != nil {
+			translated := Translate(img, int(RandBetween(c.Translate.Min, c.Translate.Max)), int(RandBetween(c.Translate.Min, c.Translate.Max)))
+			syntheticData.Translated = append(syntheticData.Translated,
+				training.Example{
+					Input:    types.Coerce[types.Tensor, float64](ImageToTensor(translated)),
+					Response: data[i].Response,
+				},
+			)
+		}
+
+		if c.Zoom != nil {
+			zoomed := ZoomImage(img, RandBetween(c.Zoom.Min, c.Zoom.Max))
+			syntheticData.Zoomed = append(syntheticData.Zoomed,
+				training.Example{
+					Input:    types.Coerce[types.Tensor, float64](ImageToTensor(zoomed)),
+					Response: data[i].Response,
+				},
+			)
+		}
+	}
+
+	return syntheticData
 }
 
 func normalize(value uint8) float64 {

@@ -47,10 +47,7 @@ func Predict(c echo.Context) error {
 	}
 	_ = utils.SaveImage(img, "dist/image.png")
 
-	tensor, err := utils.ImageToTensor(img)
-	if err != nil {
-		return c.JSON(400, utils.WrapError("could not convert image to tensor", err))
-	}
+	tensor := utils.ImageToTensor(img)
 
 	fmt.Println(utils.String(tensor))
 
@@ -91,13 +88,10 @@ func Add(c echo.Context) error {
 		return c.JSON(400, utils.WrapError("invalid image", err))
 	}
 
-	tensor, err := utils.ImageToTensor(img)
-	if err != nil {
-		return c.JSON(400, utils.WrapError("could not convert image to tensor", err))
-	}
+	bin := utils.ImageToBytes(img)
 
 	out := training.Example{
-		Input:    utils.ToUint8(types.Coerce[types.Tensor, float64](tensor)),
+		Input:    types.Coerce[types.Byte, float64](bin),
 		Response: mnist.OneHot(10, float64(*req.Expected)),
 	}
 
