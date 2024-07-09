@@ -17,6 +17,7 @@ const eraseButton = document.getElementById('eraseButton');
 const resetButton = document.getElementById('resetButton');
 const randomButton = document.getElementById('randomButton');
 const additionButton = document.getElementById('additionButton');
+const previewCheckbox = document.getElementById('previewCheckbox');
 const additionDiv = document.getElementById('addition');
 const augendElement = document.getElementById('augend');
 const addendElement = document.getElementById('addend');
@@ -35,6 +36,7 @@ eraseButton.onclick =  eraseCanvas
 resetButton.onclick = resetCanvas;
 // randomButton.onclick = randomizeExpected;
 // additionButton.onclick = randomizeAddition;
+previewCheckbox.onchange = drawTemplateNumber;
 trainButton.onclick = startTraining;
 // appendButton.onclick = sendTrainingData;
 
@@ -270,6 +272,8 @@ function randomizeAddition() {
 }
 
 function drawTemplateNumber() {
+    const previewChecked = previewCheckbox.checked;
+    if (!previewChecked) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (strokes) {
