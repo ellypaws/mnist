@@ -23,7 +23,7 @@ const augendElement = document.getElementById('augend');
 const addendElement = document.getElementById('addend');
 const sumElement = document.getElementById('sum');
 const trainButton = document.getElementById('trainButton');
-const appendButton = document.getElementById('appendButton');
+const submitButton = document.getElementById('submitButton');
 const numberButtons = document.querySelectorAll('.number-button');
 const predictionGraph = document.getElementById('predictionGraph').getContext('2d');
 const previewCanvas = document.getElementById('previewCanvas');
@@ -32,13 +32,13 @@ let chart;
 
 window.onload = randomizeExpected;
 
-eraseButton.onclick =  eraseCanvas
+eraseButton.onclick = eraseCanvas
 resetButton.onclick = resetCanvas;
 // randomButton.onclick = randomizeExpected;
 // additionButton.onclick = randomizeAddition;
 previewCheckbox.onchange = drawTemplateNumber;
 trainButton.onclick = startTraining;
-// appendButton.onclick = sendTrainingData;
+submitButton.onclick = sendTrainingData;
 
 numberButtons.forEach(button => button.onclick = () => {
     expectedInput.value = button.getAttribute('data-number');
