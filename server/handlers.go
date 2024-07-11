@@ -95,8 +95,14 @@ func Predict(c echo.Context) error {
 	return c.JSON(200, resp)
 }
 
+type addRequest struct {
+	Image    string `json:"image"`
+	Expected *int   `json:"expected,omitempty"`
+	Correct  *bool  `json:"correct,omitempty"`
+}
+
 func Add(c echo.Context) error {
-	var req predictRequest
+	var req addRequest
 	if err := c.Bind(&req); err != nil {
 		return err
 	}

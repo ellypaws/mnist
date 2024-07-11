@@ -141,7 +141,8 @@ function sendTrainingData() {
 
     const requestBody = {
         image: imageData,
-        expected: expected
+        expected: expected,
+        correct: correct,
     };
 
     fetch(apiUrl + '/v1/train', {
