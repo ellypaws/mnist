@@ -122,7 +122,7 @@ func Add(c echo.Context) error {
 		return c.JSON(500, utils.WrapError("could not append to training set", err))
 	}
 
-	return c.File(correctionSet)
+	return c.NoContent(200)
 }
 
 func Train(c echo.Context) error {
