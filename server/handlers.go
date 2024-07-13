@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	correctionSet     = "dist/drawing_data.csv"
+	incorrectSet      = "dist/incorrect_drawings.csv"
+	additionalSet     = "dist/additional_drawings.csv"
 	correctionWeights = "dist/correction_weights.json"
 
 	iterations = 100
@@ -118,7 +119,13 @@ func Add(c echo.Context) error {
 		Response: mnist.OneHot(10, float64(*req.Expected)),
 	}
 
-	if err := mnist.Append(out, correctionSet); err != nil {
+	if req.Correct != nil && !*req.Correct {
+		err = mnist.Append(out, incorrectSet)
+	} else {
+		err = mnist.Append(out, additionalSet)
+	}
+
+	if err != nil {
 		return c.JSON(500, utils.WrapError("could not append to training set", err))
 	}
 
@@ -129,14 +136,21 @@ func Train(c echo.Context) error {
 	if neuralNetwork == nil {
 		return c.JSON(500, utils.WrapError("neural network not initialized", nil))
 	}
-	correction, err := mnist.Examples(correctionSet)
+
+	correctionSet, err := mnist.Examples(incorrectSet)
 	if err != nil {
 		return c.JSON(500, utils.WrapError("could not load correction set", err))
 	}
 
-	syntheticData := synthesizer.Synthesize(correction)
+	additionalSet, err := mnist.Examples(additionalSet)
+	if err != nil {
+		return c.JSON(500, utils.WrapError("could not load additional set", err))
+	}
+	correctionSet = append(correctionSet, additionalSet...)
 
-	allData := append(slices.Clone(correction), syntheticData.Rotated...)
+	syntheticData := synthesizer.Synthesize(correctionSet)
+
+	allData := append(slices.Clone(correctionSet), syntheticData.Rotated...)
 	allData = append(allData, syntheticData.Translated...)
 	allData = append(allData, syntheticData.Zoomed...)
 
