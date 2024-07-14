@@ -13,9 +13,9 @@ import (
 
 const (
 	inputSize = 28 * 28
-	weights   = "dist/weights.json"
+	weights   = "dist/iter_25_weights.json"
 
-	iterations  = 5
+	iterations  = 25
 	trainingSet = "dist/mnist_train.csv"
 	testSet     = "dist/mnist_test.csv"
 
