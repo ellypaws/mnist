@@ -76,7 +76,7 @@ function draw(event) {
     ctx.moveTo(touch.clientX - canvas.offsetLeft, touch.clientY - canvas.offsetTop);
 }
 
-function sendDrawingToServer() {
+async function sendDrawingToServer() {
     const scaledCanvas = document.createElement('canvas');
     const scaledCtx = scaledCanvas.getContext('2d');
     scaledCanvas.width = 28;
@@ -111,6 +111,7 @@ function sendDrawingToServer() {
         .then(data => {
             updateButtonStates(data.prediction);
             displayPredictions(data);
+            return data.prediction === expected;
         })
         .catch(error => console.error('Error:', error));
 }
@@ -126,7 +127,7 @@ function startTraining() {
         .catch(error => console.error('Error:', error));
 }
 
-function sendTrainingData() {
+async function sendTrainingData() {
     const scaledCanvas = document.createElement('canvas');
     const scaledCtx = scaledCanvas.getContext('2d');
     scaledCanvas.width = 28;
@@ -138,6 +139,13 @@ function sendTrainingData() {
 
     const imageData = processedCanvas.toDataURL('image/png');
     const expected = expectedInput.value ? parseInt(expectedInput.value) : null;
+
+    if (!expected) {
+        alert('Please select a number before submitting');
+        return;
+    }
+
+    const correct = await sendDrawingToServer();
 
     const requestBody = {
         image: imageData,
@@ -167,7 +175,7 @@ function debounce(func, wait) {
     };
 }
 
-const debounceSendDrawingToServer = debounce(sendDrawingToServer, 500);
+const debounceSendDrawingToServer = debounce(await sendDrawingToServer, 500);
 
 function displayPredictions(data) {
     const predictionsDiv = document.getElementById('predictions');
