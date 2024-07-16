@@ -111,7 +111,7 @@ async function sendDrawingToServer() {
         .then(data => {
             updateButtonStates(data.prediction);
             displayPredictions(data);
-            return data.prediction === expected;
+            return data.correct || data.prediction === expected;
         })
         .catch(error => console.error('Error:', error));
 }
