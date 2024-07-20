@@ -76,7 +76,7 @@ function draw(event) {
     ctx.moveTo(touch.clientX - canvas.offsetLeft, touch.clientY - canvas.offsetTop);
 }
 
-async function sendDrawingToServer() {
+function sendDrawingToServer() {
     const scaledCanvas = document.createElement('canvas');
     const scaledCtx = scaledCanvas.getContext('2d');
     scaledCanvas.width = 28;
@@ -175,7 +175,7 @@ function debounce(func, wait) {
     };
 }
 
-const debounceSendDrawingToServer = debounce(await sendDrawingToServer, 500);
+const debounceSendDrawingToServer = debounce(sendDrawingToServer, 500);
 
 function displayPredictions(data) {
     const predictionsDiv = document.getElementById('predictions');
