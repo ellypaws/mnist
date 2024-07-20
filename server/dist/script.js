@@ -100,7 +100,7 @@ function sendDrawingToServer() {
         expected: expected
     };
 
-    fetch(apiUrl + '/v1/predict', {
+    return fetch(apiUrl + '/v1/predict', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
